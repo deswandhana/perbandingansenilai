@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DESMATH | Perbandingan Senilai</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Tahoma,Verdana,sans-serif}
+
+body{
+margin:0;
+background:linear-gradient(rgba(15,23,42,.95),rgba(15,23,42,.95));
+color:#e5e7eb;
+}
+
+.navbar{
+background:rgba(0,0,0,.7);
+backdrop-filter:blur(8px);
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:10px;
+font-weight:800;
+font-size:22px;
+color:#38bdf8;
+text-decoration:none;
+}
+
+.section{
+background:rgba(30,41,59,.97);
+border-radius:18px;
+padding:24px;
+margin-bottom:30px;
+box-shadow:0 12px 25px rgba(0,0,0,.45);
+}
+
+.geo-box{
+background:#020617;
+border-radius:16px;
+padding:15px;
+margin-bottom:15px;
+}
+
+.opt-btn{
+display:block;
+width:100%;
+margin:6px 0;
+}
+
+canvas{
+background:#fff;
+border-radius:12px;
+padding:8px;
+}
+
+/* Style Kalkulator Biasa */
+    .calc-screen {
+        background: #1e293b;
+        color: #38bdf8;
+        font-size: 1.5rem;
+        text-align: right;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        min-height: 50px;
+        border: 1px solid #334155;
+    }
+    .calc-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+    .calc-btn {
+        padding: 15px;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 8px;
+        background: #334155;
+        color: white;
+    }
+    .calc-btn:hover { background: #475569; }
+    .calc-btn.op { background: #0ea5e9; }
+    .calc-btn.eq { background: #f59e0b; grid-column: span 2; }
+    .calc-btn.clr { background: #ef4444; }
+</style>
+</head>
+
+<body>
+
+<nav class="navbar fixed-top">
+<div class="container">
+<a class="brand" href="#">
+    DESMATH
+</a>
+</div>
+</nav>
+
+<section class="container py-5 mt-5">
+
+<h1 class="mb-3">Perbandingan Senilai</h1>
+<p>Media pembelajaran interaktif matematika</p>
+
+<!-- PENGERTIAN -->
+<div class="section">
+    <h3>Pengertian</h3>
+    <p>
+        Perbandingan senilai adalah hubungan dua besaran yang berubah secara <b>berbanding lurus</b>. 
+        Jika satu nilai bertambah, maka nilai lainnya juga bertambah dengan perbandingan tetap.
+    </p>
+    <div class="geo-box">
+        <p>Hubungan ini dapat dinyatakan dalam bentuk persamaan:</p>
+        <h4 class="text-info">y = kx</h4>
+        <p>dengan:</p>
+        <ul>
+            <li><b>y</b> = besaran kedua</li>
+            <li><b>x</b> = besaran pertama</li>
+            <li><b>k</b> = konstanta perbandingan (nilai tetap)</li>
+        </ul>
+        <p>Nilai konstanta <b>k</b> dapat dicari dengan rumus:</p>
+        <div class="bg-dark p-2 rounded d-inline-block">
+            <h5 class="mb-0 text-warning">k = y / x</h5>
+        </div>
+    </div>
+</div>
+<!-- GRAFIK -->
+<div class="section">
+<h3>Visualisasi Grafik Interaktif</h3>
+<div class="row g-3">
+
+<div class="col-md-4 geo-box">
+<label>Nilai k</label>
+<input type="number" id="kInput" class="form-control mb-2" value="2" oninput="updateGraph()">
+
+<label>X maksimum</label>
+<input type="number" id="xMax" class="form-control mb-2" value="10" oninput="updateGraph()">
+
+<table class="table table-dark table-bordered text-center mt-3">
+<thead><tr><th>x</th><th>y</th></tr></thead>
+<tbody id="tableData"></tbody>
+</table>
+</div>
+
+<div class="col-md-8 geo-box">
+<canvas id="graph" height="300"></canvas>
+</div>
+
+</div>
+</div>
+<div class="col-lg-4">
+        <div class="section border border-info">
+            <h3><i class="fa-solid fa-calculator"></i> Alat Bantu Hitung</h3>
+            <div class="calc-screen" id="display">0</div>
+            <div class="calc-grid">
+                <button class="calc-btn clr" onclick="clearCalc()">C</button>
+                <button class="calc-btn op" onclick="press('/')">/</button>
+                <button class="calc-btn op" onclick="press('*')">x</button>
+                <button class="calc-btn clr" onclick="backspace()"><i class="fa-solid fa-backspace"></i></button>
+                
+                <button class="calc-btn" onclick="press('7')">7</button>
+                <button class="calc-btn" onclick="press('8')">8</button>
+                <button class="calc-btn" onclick="press('9')">9</button>
+                <button class="calc-btn op" onclick="press('-')">-</button>
+                
+                <button class="calc-btn" onclick="press('4')">4</button>
+                <button class="calc-btn" onclick="press('5')">5</button>
+                <button class="calc-btn" onclick="press('6')">6</button>
+                <button class="calc-btn op" onclick="press('+')">+</button>
+                
+                <button class="calc-btn" onclick="press('1')">1</button>
+                <button class="calc-btn" onclick="press('2')">2</button>
+                <button class="calc-btn" onclick="press('3')">3</button>
+                <button class="calc-btn eq" onclick="calculate()">=</button>
+                
+                <button class="calc-btn" style="grid-column: span 2;" onclick="press('0')">0</button>
+                <button class="calc-btn" onclick="press('.')">.</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LATIHAN SULIT -->
+<div class="section">
+<h3>Latihan </h3>
+
+<div class="geo-box">
+<p id="latihanSoal"></p>
+<div id="latihanPilihan"></div>
+<div id="latihanRes" class="fw-bold mt-2"></div>
+<div class="mt-2">Skor: <span id="latihanSkor">0</span> / 10</div>
+</div>
+
+<!-- GAME -->
+<div class="section border border-info">
+<h3>Game</h3>
+
+<div class="geo-box">
+<p id="gameSoal"></p>
+<div id="gamePilihan"></div>
+<div id="gameRes" class="fw-bold mt-2"></div>
+<div class="mt-2">Skor: <span id="gameSkor">0</span> / 10</div>
+</div>
+
+</section>
+
+<script>
+  window.onload = function() {
+    // Ambil nama dari Session Storage
+    const namaTersimpan = sessionStorage.getItem('namaSiswa');
+
+    // Jika tidak ada nama (belum login), kembalikan ke login.html
+    if (!namaTersimpan) {
+        window.location.href = "login.html";
+    } else {
+        // Tampilkan nama di elemen yang ada
+        if(document.getElementById('displayName')) {
+            document.getElementById('displayName').innerText = namaTersimpan;
+        }
+        if(document.getElementById('userGreeting')) {
+            document.getElementById('userGreeting').innerText = namaTersimpan;
+        }
+    }
+};
+let chart;
+
+function updateGraph(){
+  let k = parseFloat(document.getElementById('kInput').value);
+  let xMax = parseInt(document.getElementById('xMax').value);
+
+  if(isNaN(k) || isNaN(xMax) || xMax<=0) return;
+
+  let x = [];
+  let y = [];
+
+  for(let i=1;i<=xMax;i++){
+    x.push(i);
+    y.push(k*i);
+  }
+
+  let table="";
+  x.forEach((v,i)=>{
+    table += `<tr><td>${v}</td><td>${y[i]}</td></tr>`;
+  });
+  document.getElementById("tableData").innerHTML = table;
+
+  if(!chart){
+    chart = new Chart(document.getElementById("graph"),{
+      type:'line',
+      data:{ labels:x, datasets:[{ label:'y = kx', data:y, borderWidth:3, tension:0.3 }]},
+      options:{ responsive:true, animation:false }
+    });
+  } else {
+    chart.data.labels = x;
+    chart.data.datasets[0].data = y;
+    chart.update();
+  }
+}
+updateGraph();
+
+// ===== LATIHAN SULIT =====
+const latihan = [
+    {q:"Harga 6 buah buku adalah Rp15.000. Berapa harga 10 buah buku?", o:["Rp25.000","Rp30.000","Rp35.000"], a:"Rp25.000"},
+    {q:"Sebuah kendaraan menghabiskan 12 liter bensin untuk 180 km. Jika ada 20 liter, berapa jaraknya?", o:["280 km","300 km","320 km"], a:"300 km"},
+    {q:"5 kg jeruk harganya Rp75.000. Berapa harga 18 kg jeruk?", o:["Rp250.000","Rp260.000","Rp270.000"], a:"Rp270.000"},
+    {q:"8 meter kain seharga Rp64.000. Berapa harga 15 meter kain?", o:["Rp110.000","Rp120.000","Rp130.000"], a:"Rp120.000"},
+    {q:"Untuk mengecat 8 meter tembok butuh 4 kaleng cat. Untuk mengecat 30 meter tembok butuh berapa kaleng?", o:["15 kaleng","16 kaleng","18 kaleng"], a:"15 kaleng"},
+    {q:"10 porsi makanan butuh 2 kg beras. Untuk 45 porsi butuh berapa kg beras?", o:["8 kg","9 kg","10 kg"], a:"9 kg"},
+    {q:"Tabungan selama 6 bulan adalah Rp90.000. Berapa tabungan selama 25 bulan?", o:["Rp350.000","Rp375.000","Rp400.000"], a:"Rp375.000"},
+    {q:"Dalam 3 menit, sebuah printer mencetak 45 lembar. Dalam 11 menit tercetak?", o:["155 lembar","160 lembar","165 lembar"], a:"165 lembar"},
+    {q:"12 lusin pensil harganya Rp36.000. Harga 25 lusin pensil adalah?", o:["Rp70.000","Rp72.000","Rp75.000"], a:"Rp75.000"},
+    {q:"5 jam bekerja mendapat upah Rp20.000. Jika bekerja 18 jam, upahnya?", o:["Rp68.000","Rp70.000","Rp72.000"], a:"Rp72.000"},
+];
+
+// ===== GAME =====
+const game=[
+    {q:"12 kg tepung → 9 loyang kue. 20 kg tepung → ?", o:["15 loyang","16 loyang","17 loyang"], a:"15 loyang"},
+    {q:"15 menit → 300 kata diketik. 25 menit → ?", o:["450 kata","500 kata","550 kata"], a:"500 kata"},
+    {q:"8 liter cat → 120 m² tembok. 22 liter cat → ?", o:["310 m²","320 m²","330 m²"], a:"330 m²"},
+    {q:"7 tiket konser → Rp84.000. 20 tiket → ?", o:["Rp230.000","Rp240.000","Rp250.000"], a:"Rp240.000"},
+    {q:"9 box → 27 kg cokelat. 32 box → ?", o:["90 kg","96 kg","100 kg"], a:"96 kg"},
+    {q:"4 jam → 68 km (kecepatan tetap). 15 jam → ?", o:["240 km","255 km","270 km"], a:"255 km"},
+    {q:"10 karung pupuk → 250 kg. 18 karung → ?", o:["430 kg","450 kg","470 kg"], a:"450 kg"},
+    {q:"6 kran air → 18 liter/menit. 20 kran air → ?", o:["50 liter","60 liter","70 liter"], a:"60 liter"},
+    {q:"12 cm pada peta → 96 km. 35 cm pada peta → ?", o:["270 km","280 km","290 km"], a:"280 km"},
+    {q:"5 ekor sapi → 40 liter susu. 18 ekor sapi → ?", o:["130 liter","140 liter","144 liter"], a:"144 liter"},
+];
+// LOGIKA KALKULATOR BIASA
+let currentInput = "";
+function press(num) {
+    currentInput += num;
+    document.getElementById("display").innerText = currentInput;
+}
+function clearCalc() {
+    currentInput = "";
+    document.getElementById("display").innerText = "0";
+}
+function backspace() {
+    currentInput = currentInput.slice(0, -1);
+    document.getElementById("display").innerText = currentInput || "0";
+}
+function calculate() {
+    try {
+        currentInput = eval(currentInput).toString();
+        document.getElementById("display").innerText = currentInput;
+    } catch {
+        document.getElementById("display").innerText = "Error";
+        currentInput = "";
+    }
+}
+let lIndex=0, lScore=0, gIndex=0, gScore=0;
+function tampilLatihan(){
+    if(lIndex >= latihan.length){
+        document.getElementById("latihanSoal").innerHTML = "🎉 Latihan Selesai!";
+        document.getElementById("latihanPilihan").innerHTML = "";
+        document.getElementById("latihanRes").innerHTML = ""; 
+        return;
+    }
+    let d = latihan[lIndex];
+    document.getElementById("latihanSoal").innerHTML = `Soal ${lIndex+1}: ${d.q}`;
+    let opsi = "";
+    d.o.forEach(x => { 
+        opsi += `<button class="btn btn-outline-info opt-btn btn-lat" onclick="cekLatihan(this, '${x}')">${x}</button>`; 
+    });
+    document.getElementById("latihanPilihan").innerHTML = opsi;
+    document.getElementById("latihanRes").innerHTML = "";
+}
+
+function cekLatihan(btn, j){
+    let btns = document.querySelectorAll(".btn-lat");
+    btns.forEach(b => b.disabled = true);
+    if(j == latihan[lIndex].a){
+        lScore++; btn.classList.add("btn-correct");
+        document.getElementById("latihanRes").innerHTML = "<span class='text-success'>Benar!</span>";
+    } else {
+        btn.classList.add("btn-wrong");
+        document.getElementById("latihanRes").innerHTML = "<span class='text-danger'>Salah!</span>";
+    }
+    document.getElementById("latihanSkor").innerText = lScore;
+    setTimeout(() => { lIndex++; tampilLatihan(); }, 1000);
+}
+
+function tampilGame(){
+    if(gIndex >= game.length){
+        document.getElementById("gameSoal").innerHTML = "🏆 Game Selesai!";
+        document.getElementById("gamePilihan").innerHTML = "";
+        document.getElementById("gameRes").innerHTML = ""; 
+        return;
+    }
+    let d = game[gIndex];
+    document.getElementById("gameSoal").innerHTML = `Level ${gIndex+1}: ${d.q}`;
+    let opsi = "";
+    d.o.forEach(x => { 
+        opsi += `<button class="btn btn-primary opt-btn btn-gm" onclick="cekGame(this, '${x}')">${x}</button>`; 
+    });
+    document.getElementById("gamePilihan").innerHTML = opsi;
+    document.getElementById("gameRes").innerHTML = "";
+}
+
+function cekGame(btn, j){
+    let btns = document.querySelectorAll(".btn-gm");
+    btns.forEach(b => b.disabled = true);
+    if(j == game[gIndex].a){
+        gScore++; btn.classList.add("btn-correct");
+        document.getElementById("gameRes").innerHTML = "<span class='text-success'>Hebat!</span>";
+    } else {
+        btn.classList.add("btn-wrong");
+        document.getElementById("gameRes").innerHTML = "<span class='text-danger'>Kurang Tepat!</span>";
+    }
+    document.getElementById("gameSkor").innerText = gScore;
+    setTimeout(() => { gIndex++; tampilGame(); }, 1000);
+}
+
+// Jalankan pertama kali
+tampilLatihan();
+tampilGame();
+</script>
+
+</body>
+</html>
